@@ -1,32 +1,34 @@
-# Macro definitions
-%define ver    0.1.0
-%define rel    1 
-%define prefix /usr
+Summary:	Encompass Gnome Web Browser
+Name:		encompass
+Version:	0.1.0
+Release:	1
+License:	GPL
+Group:		Applications/Networking
+Group(pl):	Aplikacje/Sieciowe
+Source0:	http://zephyr.webhop.net/%{name}-%{version}.tar.gz
+URL:		http://zephyr.webhop.net/encompass.html
+BuildRequires:	gnome-libs-devel >= 1.2.0
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-Name:      encompass
-Version:   %{ver}
-Release:   %{rel}
-Copyright: GPL
-Packager:  Rodney Dawes <dobez@fnmail.com>
-URL:       http://zephyr.webhop.net/encompass.html
-Source:	   http://zephyr.webhop.net/encompass-%{ver}.tar.gz
-Group:     Gnome/Internet
-Requires:  gnome-libs >= 1.2.0
-Summary:   Encompass Gnome Web Browser
+%define		_prefix		/usr/X11R6
 
 %description 
 A Web Browser for Gnome using GtkHTML.
 
 %prep
+%setup -q
 
-%setup
+%build
 
-%files
-%{prefix}/share/gnome/help/encompass
-%{prefix}/share/pixmaps/encompass
-%{prefix}/share/sounds/encompass
-/etc/sound/events/encompass.soundlist
-%{prefix}/share/gnome/apps/Internet/encompass.desktop
-%{prefix}/bin/encompass
+%install
 
-%changelog
+%find_lang %{name} --with-gnome
+
+%files -f %{name}.lang
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/encompass
+%{_datadir}/gnome/help/encompass
+%{_datadir}/pixmaps/encompass
+%{_datadir}/sounds/encompass
+%{_sysconfdir}/sound/events/encompass.soundlist
+%{_applnkdir}/Network/WWW/encompass.desktop
