@@ -1,0 +1,176 @@
+--- encompass-0.5.99.3/src/encompass-http.c.orig	Sat May 31 19:38:52 2003
++++ encompass-0.5.99.3/src/encompass-http.c	Fri Jul  4 13:23:51 2003
+@@ -142,9 +142,9 @@
+     if (!g_strcasecmp ("https", uri->protocol)) {
+       ne_ssl_set_verify (session->session,
+ 			 (void *) encompass_ssl_verify, window);
+-      ne_ssl_provide_ccert (session->session,
+-			    (void *) encompass_ssl_provide_cert, window);
+-      ne_ssl_load_default_ca (session->session);
++      ne_ssl_provide_clicert (session->session,
++			    encompass_ssl_provide_cert, window);
++      ne_ssl_trust_default_ca (session->session);
+     }
+     if (window->prefs->use_proxy) {
+       ne_session_proxy (session->session, window->prefs->proxy_host,
+--- encompass-0.5.99.3/src/encompass-ssl.c.orig	Sat May 31 19:00:18 2003
++++ encompass-0.5.99.3/src/encompass-ssl.c	Fri Jul  4 13:25:53 2003
+@@ -4,19 +4,9 @@
+   gchar * from;
+   gchar * to;
+ 
+-  gchar * sCountry;
+-  gchar * sState;
+-  gchar * sLocality;
+   gchar * sOrganization;
+-  gchar * sOrgUnit;
+-  gchar * sCNAME;
+ 
+-  gchar * iCountry;
+-  gchar * iState;
+-  gchar * iLocality;
+   gchar * iOrganization;
+-  gchar * iOrgUnit;
+-  gchar * iCNAME;
+ };
+ 
+ static gboolean IS_THIS_SSL_CERT_GOOD_BECAUSE_NEON_IS_ON_CRACK;
+@@ -25,29 +15,21 @@
+   g_free (key->from);
+   g_free (key->to);
+ 
+-  g_free (key->sCountry);
+-  g_free (key->sState);
+-  g_free (key->sLocality);
+   g_free (key->sOrganization);
+-  g_free (key->sOrgUnit);
+-  g_free (key->sCNAME);
+ 
+-  g_free (key->iCountry);
+-  g_free (key->iState);
+-  g_free (key->iLocality);
+   g_free (key->iOrganization);
+-  g_free (key->iOrgUnit);
+-  g_free (key->iCNAME);
+ }
+ 
+ static void * e_for_each (gchar * key, ESSLCert * value,
+ 			  const ne_ssl_certificate * cert) {
+   const ESSLCert * crack;
++  char * certdn;
+ 
+   crack = g_hash_table_lookup (ECerts, key);
++  certdn = ne_ssl_readable_dname (ne_ssl_cert_subject (cert));
+ 
+-  if (!strcmp (crack->sCNAME, cert->subject->commonName) &&
+-      !strcmp (key, cert->subject->commonName)) {
++  if (!strcmp (crack->sOrganization, certdn) &&
++      !strcmp (key, certdn)) {
+     IS_THIS_SSL_CERT_GOOD_BECAUSE_NEON_IS_ON_CRACK = TRUE;
+   } else {
+     IS_THIS_SSL_CERT_GOOD_BECAUSE_NEON_IS_ON_CRACK = FALSE;
+@@ -60,6 +42,7 @@
+   gchar * errmsg;
+   gint retval;
+   ESSLCert * foobar;
++  char cert_from[NE_SSL_VDATELEN], cert_until[NE_SSL_VDATELEN];
+ 
+   /* TODO: Implement a real dialog and better error checking */
+ 
+@@ -78,12 +61,12 @@
+     errmsg = g_strdup (_("Certificate has expired.\n\n"
+ 			 "Do you wish to continue?"));
+   }
+-  if (failures & NE_SSL_UNKNOWNCA) {
++  if (failures & NE_SSL_UNTRUSTED) {
+     errmsg = g_strdup (_("The security certificate was issued by a company\n"
+ 			 "you have not chosen to trust.\n\n"
+ 			 "Do you wish to continue?"));
+   }
+-  if (failures & NE_SSL_CNMISMATCH) {
++  if (failures & NE_SSL_IDMISMATCH) {
+     errmsg = g_strdup (_("The hostname of the certificate does not match\n"
+ 			 "the hostname of the server.\n\n"
+ 			 "Do you wish to continue?"));
+@@ -95,10 +78,10 @@
+ 
+   /* TODO: These need to go in some sort of "View Cert" dialog instead */
+ 
+-  printf ("DEBUG: Valid from %s until %s\n", cert->from, cert->until);
+-  printf ("DEBUG: Issued by: %s\n", cert->issuer->organization);
+-  printf ("DEBUG: Issued to: %s\n", cert->subject->organization);
+-  printf ("DEBUG: Domain: %s\n", cert->subject->commonName);
++  ne_ssl_cert_validity (cert, cert_from, cert_until);
++  printf ("DEBUG: Valid from %s until %s\n", cert_from, cert_until);
++  printf ("DEBUG: Issued by: %s\n", ne_ssl_readable_dname (ne_ssl_cert_issuer (cert)));
++  printf ("DEBUG: Issued to: %s\n", ne_ssl_readable_dname (ne_ssl_cert_subject (cert)));
+ 
+   mbox = gnome_message_box_new (errmsg, GNOME_MESSAGE_BOX_WARNING,
+ 				GNOME_STOCK_BUTTON_YES,
+@@ -110,24 +93,14 @@
+ 
+     ecert = g_new0 (ESSLCert, 1);
+ 
+-    ecert->from = g_strdup (cert->from);
+-    ecert->to = g_strdup (cert->until);
++    ecert->from = g_strdup (cert_from);
++    ecert->to = g_strdup (cert_until);
+ 
+-    ecert->sCountry = g_strdup (cert->subject->country);
+-    ecert->sState = g_strdup (cert->subject->state);
+-    ecert->sLocality = g_strdup (cert->subject->locality);
+-    ecert->sOrganization = g_strdup (cert->subject->organization);
+-    ecert->sOrgUnit = g_strdup (cert->subject->organizationalUnit);
+-    ecert->sCNAME = g_strdup (cert->subject->commonName);
+-
+-    ecert->iCountry = g_strdup (cert->issuer->country);
+-    ecert->iState = g_strdup (cert->issuer->state);
+-    ecert->iLocality = g_strdup (cert->issuer->locality);
+-    ecert->iOrganization = g_strdup (cert->issuer->organization);
+-    ecert->iOrgUnit = g_strdup (cert->issuer->organizationalUnit);
+-    ecert->iCNAME = g_strdup (cert->issuer->commonName);
++    ecert->sOrganization = g_strdup (ne_ssl_readable_dname (ne_ssl_cert_subject (cert)));
+ 
+-    g_hash_table_insert (ECerts, ecert->sCNAME, ecert);
++    ecert->iOrganization = g_strdup (ne_ssl_readable_dname (ne_ssl_cert_issuer (cert)));
++
++    g_hash_table_insert (ECerts, ecert->sOrganization, ecert);
+   }
+ 
+   return retval;
+@@ -135,6 +108,8 @@
+ 
+ void * encompass_ssl_provide_cert (BrowserWindow * window,
+ 				   ne_session * session,
+-				   const ne_ssl_dname * dname) {
+-  printf ("DEBUG: server: %s\n", ne_ssl_readable_dname (dname));
++				   const ne_ssl_dname *const *dnames,
++				   int dncount) {
++  if (dncount > 0)
++  printf ("DEBUG: server: %s\n", ne_ssl_readable_dname (dnames[0]));
+ }
+--- encompass-0.5.99.3/src/encompass-goto.c.orig	Wed May 14 01:46:12 2003
++++ encompass-0.5.99.3/src/encompass-goto.c	Fri Jul  4 13:20:02 2003
+@@ -76,9 +76,9 @@
+ 
+     if (!g_strcasecmp ("https", uri->protocol)) {
+       ne_ssl_set_verify (session, (void *) encompass_ssl_verify, window);
+-      ne_ssl_provide_ccert (session, (void *) encompass_ssl_provide_cert,
++      ne_ssl_provide_clicert (session, encompass_ssl_provide_cert,
+ 			    window);
+-      ne_ssl_load_default_ca (session);
++      ne_ssl_trust_default_ca (session);
+     }
+     if (window->prefs->use_proxy) {
+       ne_session_proxy (session, window->prefs->proxy_host,
+--- encompass-0.5.99.3/src/encompass-ssl.h.orig	Wed May 14 01:46:13 2003
++++ encompass-0.5.99.3/src/encompass-ssl.h	Fri Jul  4 13:19:57 2003
+@@ -8,6 +8,7 @@
+ 			   const ne_ssl_certificate * cert);
+ void * encompass_ssl_provide_cert (BrowserWindow * window,
+ 				   ne_session * session,
+-				   const ne_ssl_dname * dname);
++				   const ne_ssl_dname *const *dnames,
++				   int dncount);
+ 
+ #endif
