@@ -5,8 +5,6 @@ Version:	0.4.4
 Release:	1
 License:	GPL
 Group:		Applications/Networking
-Group(de):	Applikationen/Netzwerkwesen
-Group(pl):	Aplikacje/Sieciowe
 Source0:	http://encompass.sourceforge.net/%{name}-%{version}.tar.gz
 URL:		http://encompass.sourceforge.net/
 BuildRequires:	gnome-libs-devel >= 1.2.0
