@@ -15,7 +15,6 @@ BuildRequires:	gal-devel >= 0.7
 BuildRequires:	autoconf
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_prefix		/usr/X11R6
 
 %description
 A Web Browser for Gnome using GtkHTML.
