@@ -6,6 +6,7 @@ Release:	1
 License:	GPL
 Group:		Applications/Networking
 Source0:	http://encompass.sourceforge.net/%{name}-%{version}.tar.gz
+# Source0-md5:	d5f4ff69a9ba40df7c0b2f7294ca2c34
 URL:		http://encompass.sourceforge.net/
 BuildRequires:	gnome-libs-devel >= 1.2.0
 BuildRequires:	neon-devel >= 0.15.0
