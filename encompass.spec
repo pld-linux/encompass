@@ -1,21 +1,23 @@
 Summary:	Encompass Gnome Web Browser
 Summary(pl):	Przegl±darka WWW dla Gnome
 Name:		encompass
-Version:	0.4.4
+Version:	0.5.99.3
 Release:	1
 License:	GPL
 Group:		Applications/Networking
 Source0:	http://encompass.sourceforge.net/%{name}-%{version}.tar.gz
-# Source0-md5:	d5f4ff69a9ba40df7c0b2f7294ca2c34
+# Source0-md5:	a042bf72f1ecbe33ac9b219250e428c6
+Patch0:		%{name}-neon-update.patch
 URL:		http://encompass.sourceforge.net/
-BuildRequires:	gnome-libs-devel >= 1.2.0
-BuildRequires:	neon-devel >= 0.15.0
-BuildRequires:	gnome-print-devel >= 0.24
-BuildRequires:	gdk-pixbuf-devel
-BuildRequires:	gal-devel >= 0.7
-BuildRequires:	autoconf
+BuildRequires:	gal-devel >= 1.99
+BuildRequires:	gnome-vfs2-devel >= 2.0
+BuildRequires:	gtkhtml-devel >= 3.0
+BuildRequires:	libelysium >= 0.99.8.1
+BuildRequires:	libgnomeui-devel >= 2.0
+BuildRequires:	libxml2-devel
+# 0.21.0 in vanilla version, about 0.24.0 with patch
+BuildRequires:	neon-devel >= 0.24.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
 
 %description
 A Web Browser for Gnome using GtkHTML.
@@ -25,24 +27,26 @@ Przegl±darka WWW dla Gnome korzystaj±ca z GtkHTML.
 
 %prep
 %setup -q
+%patch -p1
 
 %build
-%{__autoconf}
 %configure
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} DESTDIR=$RPM_BUILD_ROOT install
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 %find_lang %{name} --with-gnome
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/encompass
-%{_datadir}/gnome/help/encompass
-%{_pixmapsdir}/encompass
+%{_libdir}/bonobo/servers/*.server
 %{_datadir}/sounds/encompass
 %{_sysconfdir}/sound/events/encompass.soundlist
-%{_applnkdir}/Network/WWW/encompass.desktop
+%{_pixmapsdir}/encompass
+%{_pixmapsdir}/encompass.png
+%{_desktopdir}/encompass.desktop
