@@ -28,7 +28,7 @@ A Web Browser for Gnome using GtkHTML.
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/encompass
 %{_datadir}/gnome/help/encompass
-%{_datadir}/pixmaps/encompass
+%{_pixmapsdir}/encompass
 %{_datadir}/sounds/encompass
 %{_sysconfdir}/sound/events/encompass.soundlist
 %{_applnkdir}/Network/WWW/encompass.desktop
