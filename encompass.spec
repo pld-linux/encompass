@@ -1,13 +1,13 @@
 Summary:	Encompass Gnome Web Browser
 Summary(pl):	Przegl±darka WWW dla Gnome
 Name:		encompass
-Version:	0.1.0
+Version:	0.4.2
 Release:	1
 License:	GPL
 Group:		Applications/Networking
 Group(pl):	Aplikacje/Sieciowe
-Source0:	http://zephyr.webhop.net/%{name}-%{version}.tar.gz
-URL:		http://zephyr.webhop.net/encompass.html
+Source0:	http://prdownloads.sourceforge.net/encompass/%{name}-%{version}.tar.gz
+URL:		http://dobey.free.fr/encompass/
 BuildRequires:	gnome-libs-devel >= 1.2.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
