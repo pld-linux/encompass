@@ -27,7 +27,7 @@ Przegl±darka WWW dla Gnome korzystaj±ca z GtkHTML.
 %setup -q
 
 %build
-autoconf
+%{__autoconf}
 %configure
 %{__make}
 
