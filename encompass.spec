@@ -5,6 +5,7 @@ Version:	0.4.2
 Release:	1
 License:	GPL
 Group:		Applications/Networking
+Group(de):	Applikationen/Netzwerkwesen
 Group(pl):	Aplikacje/Sieciowe
 Source0:	http://prdownloads.sourceforge.net/encompass/%{name}-%{version}.tar.gz
 URL:		http://dobey.free.fr/encompass/
@@ -25,6 +26,7 @@ Przegl±darka WWW dla Gnome korzystaj±ca z GtkHTML.
 %build
 
 %install
+rm -rf $RPM_BUILD_ROOT
 
 %find_lang %{name} --with-gnome
 
