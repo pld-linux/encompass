@@ -17,7 +17,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_prefix		/usr/X11R6
 
-%description 
+%description
 A Web Browser for Gnome using GtkHTML.
 
 %description -l pl
