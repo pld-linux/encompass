@@ -1,15 +1,20 @@
 Summary:	Encompass Gnome Web Browser
 Summary(pl):	Przegl±darka WWW dla Gnome
 Name:		encompass
-Version:	0.4.2
+Version:	0.4.4
 Release:	1
 License:	GPL
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
 Group(pl):	Aplikacje/Sieciowe
-Source0:	http://prdownloads.sourceforge.net/encompass/%{name}-%{version}.tar.gz
-URL:		http://dobey.free.fr/encompass/
+Source0:	http://encompass.sourceforge.net/%{name}-%{version}.tar.gz
+URL:		http://encompass.sourceforge.net/
 BuildRequires:	gnome-libs-devel >= 1.2.0
+BuildRequires:	neon-devel >= 0.15.0
+BuildRequires:	gnome-print-devel >= 0.24
+BuildRequires:	gdk-pixbuf-devel
+BuildRequires:	gal-devel >= 0.7
+BuildRequires:	autoconf
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_prefix		/usr/X11R6
@@ -24,9 +29,14 @@ Przegl±darka WWW dla Gnome korzystaj±ca z GtkHTML.
 %setup -q
 
 %build
+autoconf
+%configure
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
+
+%{__make} DESTDIR=$RPM_BUILD_ROOT install
 
 %find_lang %{name} --with-gnome
 
