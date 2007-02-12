@@ -1,5 +1,5 @@
 Summary:	Encompass GNOME Web Browser
-Summary(pl.UTF-8):   Przeglądarka WWW dla GNOME
+Summary(pl.UTF-8):	Przeglądarka WWW dla GNOME
 Name:		encompass
 Version:	0.5.99.3
 Release:	1
