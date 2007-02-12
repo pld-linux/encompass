@@ -1,5 +1,5 @@
 Summary:	Encompass GNOME Web Browser
-Summary(pl):	Przegl±darka WWW dla GNOME
+Summary(pl.UTF-8):   PrzeglÄ…darka WWW dla GNOME
 Name:		encompass
 Version:	0.5.99.3
 Release:	1
@@ -22,8 +22,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 A Web Browser for GNOME using GtkHTML.
 
-%description -l pl
-Przegl±darka WWW dla GNOME korzystaj±ca z GtkHTML.
+%description -l pl.UTF-8
+PrzeglÄ…darka WWW dla GNOME korzystajÄ…ca z GtkHTML.
 
 %prep
 %setup -q
